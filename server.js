@@ -59,11 +59,11 @@ app.post('/api/todos', async (req, res) => {
         // eslint-disable-next-line no-unused-vars
         const query = `
         insert into todos (task, complete)
-        values ('${req.body.task}', false)
+        values ($1, false)
         returning *;
     `;
         const result = await client.query(query,
-            [/* pass in data */]);
+            [req.body.task]);
 
         // respond to the client request with the newly created todo
         res.json(result.rows[0]);
@@ -81,10 +81,10 @@ app.put('/api/todos/:id', async (req, res) => {
     try {
         const result = await client.query(`
         update todos
-        set complete=${req.body.complete}
+        set complete=$1
         where id = ${req.params.id}
         returning *;
-        `, [/* pass in data */]);
+        `, [req.body.complete]);
 
         res.json(result.rows[0]);
     }
