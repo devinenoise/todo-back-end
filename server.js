@@ -5,8 +5,13 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const client = require('./lib/client');
 // Initiate database connection
+
+// "require" pg (after `npm i pg`)
+const pg = require('pg');
+// Use the pg Client
+const Client = pg.Client;
+const client = new Client(process.env.DATABASE_URL);
 client.connect();
 
 // Application Setup
