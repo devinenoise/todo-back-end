@@ -66,8 +66,8 @@ app.get('/api/todos', async (req, res) => {
     try {
         // make a sql query using pg.Client() to select * from todos
         const result = await client.query(`
-            select * from todos;
-        `);
+            select * from todos where user_id=$1;
+        `, [req.userId]);
 
         // respond to the client with that data
         res.json(result.rows);
@@ -87,18 +87,18 @@ app.post('/api/todos', async (req, res) => {
     try {
         // the user input lives is req.body.task
 
-        console.log('|||||||', req.body);
+        console.log('|||||||', req.userId);
         // use req.body.task to build a sql query to add a new todo
         // we also return the new todo
 
         // eslint-disable-next-line no-unused-vars
         const query = `
-        insert into todos (task, complete)
-        values ($1, false)
+        insert into todos (task, complete, user_id)
+        values ($1, $2, $3)
         returning *;
     `;
         const result = await client.query(query,
-            [req.body.task]);
+            [req.body.task, false, req.userId]);
 
         // respond to the client request with the newly created todo
         res.json(result.rows[0]);
